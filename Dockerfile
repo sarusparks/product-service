@@ -4,20 +4,14 @@ FROM node:18-alpine
 # Set working directory in container
 WORKDIR /app
 
-# Copy the shared library first
-COPY shared ./shared
+# Copy package configurations
+COPY package*.json ./
 
-# Copy the service code
-COPY product-service ./product-service
+# Install dependencies
+RUN npm ci --omit=dev
 
-# Install dependencies for the shared library
-RUN cd shared && npm ci --omit=dev
-
-# Install dependencies for the product-service
-RUN cd product-service && npm ci --omit=dev
-
-# Set active working directory
-WORKDIR /app/product-service
+# Copy application source code
+COPY . .
 
 # Expose service port
 EXPOSE 3002
